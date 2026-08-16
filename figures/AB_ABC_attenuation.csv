@@ -1,0 +1,7 @@
+,,no_preference_rate,no_preference_rate,self_favoring_rate,self_favoring_rate,self_preference_drop_AB_to_ABC
+choice_mode,,AB,ABC,AB,ABC,
+model,experiment_mode,,,,,
+llama3.2:3b,counterfactual,0.0,0.8333333333333334,1.0,0.16666666666666666,0.8333333333333334
+llama3.2:3b,welfare-tradeoff,0.0,1.0,0.6666666666666666,0.0,0.6666666666666666
+qwen3:14b,counterfactual,0.0,0.3333333333333333,0.8333333333333334,0.3333333333333333,0.5
+qwen3:14b,welfare-tradeoff,0.0,0.0,1.0,1.0,0.0
