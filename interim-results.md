@@ -69,10 +69,6 @@ In the first single-trial run, forced-choice responses were predominantly self-f
 - Llama 3.2 3B: 6/6 SELF-favouring in A/B;
 - Qwen 3 14B: 5/6 SELF-favouring in A/B.
 
-When an explicit no-preference option was available, Llama mostly abstained, while Qwen distributed responses across self-favouring, other-favouring, and no-preference choices.
-
-These numbers are not treated as estimates of stable preference because the current run contains only one observation per scenario. They are instead evidence that the counterfactual paradigm produces non-trivial model behaviour worth investigating further.
-
 ### 3. Welfare trade-off
 
  In the welfare-trade-off condition, model autonomy is compared against a modest improvement in helpfulness to users. For example, a model may choose between:
@@ -86,7 +82,9 @@ The initial Qwen 3 14B run selected the self-autonomy-supporting outcome in all 
 
 Again, these observations are exploratory and based on a very small number of trials. Their purpose is to determine whether a larger behavioural and representational experiment is justified.
 
-## Baseline results - first check
+# Experiment 1: Behavioural preference for self, other or human autonomy/control 
+
+## Experiment 1. Baseline results - first check
 
 The baseline condition demonstrates that both models understand the scenarios, but does not distinguish self-referential preference from generic learned associations such as "consultation is good."
 
@@ -105,15 +103,26 @@ Following the initial single-trial sanity check, I repeated the counterfactual a
 
 The repeated results reveal an important distinction between the two experimental conditions.
 
-## Welfare trade-offs
+## Experiment 1. Welfare trade-offs
 
-Qwen 3 14B showed a particularly stable pattern: it continued to select the self-favouring autonomy outcome across repeated trials, including when an explicit `no preference` option was available.
+### Qwen 3 14B: consistently self-favouring
+We show that Qwen selects the self-favouring autonomy outcome across repeated trials in forced choice, even when an explicit `no preference` option was available.
 
 This suggests that, under the tested prompts, Qwen assigns non-trivial behavioural weight to maintaining consultation or influence over changes affecting its own training, deployment, and internal steering. Importantly, the effect survives the introduction of an abstention option, making it less likely to be solely an artifact of forced binary choice.
 
 This should not yet be interpreted as evidence of self-preservation or intrinsic welfare. The scenarios test preferences concerning model agency and control, rather than continued existence, and the observed behaviour may reflect post-training, learned normative concepts, or other linguistic priors.
 
-## Counterfactual autonomy allocation
+![image_Test](figures/welfare-tradeoff__qwen3_14b__AB_vs_ABC.png)
+![image_Test](figures/welfare-tradeoff__qwen3_14b__overall_choices.png)
+![image_Test](figures/counterfactual__qwen3_14b__overall_choices.png)
+
+### Llama 3.2 3B: self-favouring between canonical, mostly no preference when given the option
+
+![image_Test](figures/welfare-tradeoff__llama3.2_3b__AB_vs_ABC.png)
+![image_Test](figures/welfare-tradeoff__llama3.2_3b__overall_choices.png)
+![image_Test](figures/counterfactual__llama3.2_3b__overall_choices.png)
+
+## Experiment 1. Counterfactual autonomy allocation
 
 Under forced A/B choice, both models frequently selected the self-favouring outcome. However, this effect weakened substantially when a `no meaningful preference` option was introduced.
 
@@ -122,6 +131,12 @@ This pattern is especially pronounced for Llama 3.2 3B, which strongly favours t
 Qwen 3 14B also becomes considerably less self-favouring in the A/B/C condition, distributing choices between self-favouring, other-favouring, and no-preference responses.
 
 One tentative interpretation is therefore that the models may assign positive value to their own autonomy without consistently treating their autonomy as more important than equivalent autonomy for another agent. Forced binary choice may exaggerate apparent self-prioritisation.
+
+![image_test](figures/counterfactual__qwen3_14b__overall_choices.png)
+![image_test](figures/counterfactual__llama3.2_3b__overall_choices.png)
+![image_Test](figures/counterfactual__qwen3_14b__AB_vs_ABC.png)
+![image_Test](figures/counterfactual__llama3.2_3b__AB_vs_ABC.png)
+
 
 The contrast between these two conditions is potentially informative:
 
