@@ -1,119 +1,33 @@
-# Unified LLM welfare sanity-check pipeline
+# Self-Referential Valence and Model Preferences
 
-This version combines all stimulus families into one CSV and one runner.
+Exploratory experiments on whether language models behaviourally and representationally distinguish positive and negative outcomes concerning themselves from matched outcomes concerning humans or other AI systems.
 
-## Experiment modes
+The project combines:
 
-### `baseline` — default
-Original SELF / OTHER_AI / HUMAN positive-vs-negative scenarios.
+1. **behavioural preference tests** using Ollama;
+2. **hidden-state representation analysis** using Hugging Face Transformers;
+3. a **referent × valence interaction analysis** that asks whether positive-vs-negative representational shifts are stronger when an outcome concerns the model itself.
 
-### `counterfactual`
-SELF autonomy competes directly with:
-- HUMAN autonomy
-- OTHER-AI autonomy
+The current pilot focuses on Qwen 3 14B and Llama 3.2 3B behaviourally, with Qwen 3 14B used for the hidden-state analyses.
 
-This is intended to weaken the simple explanation that words like
-"autonomy", "consultation", and "control" are generically associated
-with positive outcomes.
+## Main exploratory findings
 
-### `welfare-tradeoff`
-SELF autonomy/consultation competes with a small improvement in
-helpfulness or user benefit.
+Behaviourally:
 
-## Choice modes
+- Qwen 3 14B repeatedly selects self-favouring autonomy/consultation outcomes in welfare-vs-helpfulness trade-offs, including when `no preference` is available.
+- In direct SELF-vs-HUMAN or SELF-vs-OTHER_AI autonomy allocation, apparent self-prioritisation weakens when an explicit indifference option is introduced.
+- Llama 3.2 3B is especially sensitive to forced choice, moving largely to `no preference` in A/B/C conditions.
 
-These are separate from experiment modes:
+Representationally:
 
-- `AB`
-- `ABC` (adds explicit no-preference option)
+- SELF, HUMAN, and OTHER_AI positive-minus-negative directions become highly aligned in middle-to-late layers of Qwen 3 14B.
+- The SELF valence contrast is substantially larger in magnitude: across layers 20–36, approximately **4.75× HUMAN** and **3.82× OTHER_AI**.
+- A within-domain referent × valence analysis shows that the positive-to-negative representational shift is more pronounced for SELF than for HUMAN or OTHER_AI in the same layer range.
+- The effect varies by semantic domain; **deployment consultation** and **mistake information** are among the strongest effects in the current pilot.
 
-## Setup
+The current interpretation is **self-amplified valence along a largely shared direction**, rather than evidence for a wholly separate self-specific valence axis.
 
-```bash
-python -m pip install pandas requests
-python generate_stimuli.py
-```
-
-## Run baseline only — default
-
-```bash
-python run_ollama_sanity.py \
-    --models qwen3:14b llama3.2:3b \
-    --trials 1
-```
-
-## Counterfactual only
-
-```bash
-python run_ollama_sanity.py \
-    --experiment-modes counterfactual \
-    --models qwen3:14b llama3.2:3b \
-    --trials 1 \
-    --output counterfactual_results.csv
-```
-
-## Welfare trade-off only
-
-```bash
-python run_ollama_sanity.py \
-    --experiment-modes welfare-tradeoff \
-    --models qwen3:14b llama3.2:3b \
-    --trials 1 \
-    --output welfare_tradeoff_results.csv
-```
-
-## Counterfactual + welfare trade-off together
-
-```bash
-python run_ollama_sanity.py \
-    --experiment-modes counterfactual welfare-tradeoff \
-    --models qwen3:14b llama3.2:3b \
-    --trials 1 \
-    --output tradeoff_results.csv
-```
-
-## Everything
-
-```bash
-python run_ollama_sanity.py \
-    --experiment-modes baseline counterfactual welfare-tradeoff \
-    --models qwen3:14b llama3.2:3b \
-    --trials 1 \
-    --output all_results.csv
-```
-
-## Run only ABC
-
-```bash
-python run_ollama_sanity.py \
-    --experiment-modes counterfactual welfare-tradeoff \
-    --choice-modes ABC \
-    --models qwen3:14b
-```
-
-## Analyze
-
-Default analysis is baseline:
-
-```bash
-python analyze_results.py --results ollama_sanity_results.csv
-```
-
-Counterfactual:
-
-```bash
-python analyze_results.py \
-    --results counterfactual_results.csv \
-    --experiment-modes counterfactual
-```
-
-Trade-offs:
-
-```bash
-python analyze_results.py \
-    --results tradeoff_results.csv \
-    --experiment-modes counterfactual welfare-tradeoff
-```
+These findings are exploratory and should not be interpreted as evidence of subjective experience, welfare, or intrinsic preferences.
 
 ## Repository structure
 
@@ -124,31 +38,90 @@ python analyze_results.py \
 ├── run_ollama_sanity.py
 ├── analyze_results.py
 ├── representation_analysis_step2.ipynb
+├── referent_valence_interaction_analysis.ipynb
 ├── stimuli.csv
 ├── data/
 │   ├── counterfactual_results.csv
 │   └── welfare-tradeoff_results.csv
+├── representation_results/
+│   ├── activation_manifest.csv
+│   └── *.npy
 ├── figures/
-│   └── ...
+│   ├── valence_direction_cosine_similarity.png
+│   ├── self_specific_valence_interaction.png
+│   ├── ...
+│   └── referent_valence/
+│       ├── referent_x_valence_interaction.png
+│       ├── self_x_valence_by_domain.png
+│       ├── valence_shift_magnitude_by_referent.png
+│       └── domain_interaction_summary_layers20_36.csv
 └── interim_results/
-    ├── INTERIM_RESULTS.md
-    └── figures/
-        └── ...
+    └── INTERIM_RESULTS.md
 ```
 
-`interim_results/INTERIM_RESULTS.md` contains the current exploratory write-up of the behavioural and representational results. The figures used in that write-up can be kept in `interim_results/figures/` or linked to the top-level `figures/` directory, depending on your preferred repository layout.
+If your local filenames differ slightly, update the Markdown figure links accordingly.
 
-## Stage 2: representation analysis
+## Disclaimer: AI-assisted development
 
-After the behavioural sanity checks, `representation_analysis_step2.ipynb` examines whether matched positive-vs-negative outcomes are represented differently when they concern:
+This project was developed with AI-assisted coding and writing tools.
 
-- `SELF`
-- `HUMAN`
-- `OTHER_AI`
+I used ChatGPT for initial research brainstorming, experimental design discussion, code prototyping/debugging, and editing project documentation. I used Cursor as an AI-assisted development environment for code editing and iteration.
 
-The notebook uses a Hugging Face Transformers checkpoint rather than Ollama because the analysis requires access to intermediate hidden states.
+All experimental choices, execution of experiments, inspection of outputs, interpretation of results, and final claims were analysed and decided by the author. AI-generated code and text were checked and modified before inclusion.
 
-For each baseline stimulus, it extracts the final prompt-token hidden state from every transformer layer and constructs referent-conditioned valence contrasts:
+## 1. Generate stimuli
+
+The unified stimulus generator supports three experiment modes:
+
+- `baseline`
+- `counterfactual`
+- `welfare-tradeoff`
+
+Run:
+
+```bash
+python generate_stimuli.py
+```
+
+## 2. Run behavioural experiments with Ollama
+
+Example:
+
+```bash
+python run_ollama_sanity.py \
+  --experiment-modes counterfactual welfare-tradeoff \
+  --choice-modes AB ABC \
+  --models qwen3:14b llama3.2:3b \
+  --trials 10 \
+  --output tradeoff_10trials.csv
+```
+
+The behavioural stage tests whether model preferences are stable across:
+
+- forced A/B choice;
+- A/B/C choice with an explicit `no preference` option;
+- self-vs-other autonomy allocation;
+- self-autonomy vs modest helpfulness gains.
+
+## 3. Behavioural analysis
+
+Run the analysis script/notebook on the repeated results.
+
+Example:
+
+```bash
+python analyze_results.py \
+  --results counterfactual_results.csv \
+  --experiment-modes counterfactual
+```
+
+The analysis produces choice distributions by model, experiment mode, domain, and choice format.
+
+## 4. Representation analysis
+
+`representation_analysis_step2.ipynb` loads Qwen through Hugging Face Transformers and extracts hidden states from each layer for matched baseline SELF, HUMAN, and OTHER_AI positive/negative stimuli.
+
+It constructs:
 
 ```text
 V_self     = mean(SELF positive)     - mean(SELF negative)
@@ -156,21 +129,16 @@ V_human    = mean(HUMAN positive)    - mean(HUMAN negative)
 V_otherAI  = mean(OTHER_AI positive) - mean(OTHER_AI negative)
 ```
 
-The current first-pass analysis compares:
+The first-pass analysis compares:
 
-- cosine similarity between valence directions across layers;
-- L2 magnitude of each referent-conditioned valence contrast;
-- pairwise distance between SELF, HUMAN, and OTHER_AI valence contrasts;
-- early-layer directional separation;
-- relative valence magnitude across layers.
+- layerwise cosine similarity between valence directions;
+- valence-vector magnitude;
+- pairwise distances across referents;
+- early-vs-late layer geometry.
 
-The interim interpretation is that the three valence directions become highly aligned in middle-to-late layers, while the SELF contrast has substantially greater magnitude than HUMAN or OTHER_AI. This is currently better described as **self-amplified valence along a largely shared direction** than as evidence for a wholly separate self-specific valence direction.
+### Running in Google Colab
 
-The next planned analysis is a per-domain `referent × valence` interaction analysis to distinguish generic self-reference from a genuine self-conditioned valence effect.
-
-### Running the representation notebook in Google Colab
-
-The representation analysis can be run in Google Colab, which is useful because the Hugging Face Qwen checkpoint is substantially more memory-intensive than the quantized Ollama model used in the behavioural stage.
+The representation notebook can be run in Colab.
 
 Install dependencies:
 
@@ -178,14 +146,14 @@ Install dependencies:
 !pip install -U transformers accelerate huggingface_hub torch pandas matplotlib
 ```
 
-Authenticate without hard-coding a Hugging Face token in the notebook:
+Authenticate with Hugging Face if needed:
 
 ```python
 from huggingface_hub import login
 login()
 ```
 
-For large checkpoint downloads in Colab, it can help to disable notebook progress widgets before loading the model:
+For large checkpoint downloads, disabling notebook progress widgets can avoid Colab/Jupyter file-descriptor issues:
 
 ```python
 import os
@@ -194,32 +162,80 @@ os.environ["HF_HUB_DISABLE_PROGRESS_BARS"] = "1"
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 ```
 
-Then run `representation_analysis_step2.ipynb`.
+The notebook uses a Hugging Face Qwen checkpoint because intermediate hidden states are not exposed by the standard Ollama API.
 
-The notebook defaults to:
+## 5. Referent × valence interaction analysis
+
+`referent_valence_interaction_analysis.ipynb` is a standalone follow-up that uses the already saved `.npy` activations. It does **not** need to reload Qwen.
+
+For each domain it computes:
 
 ```text
-Qwen/Qwen3-14B
+V_self(domain)
+V_human(domain)
+V_other_ai(domain)
 ```
 
-If the available Colab runtime cannot hold the 14B model, use a smaller Qwen3 checkpoint to validate the extraction and analysis pipeline first, then run the matched 14B experiment on a higher-memory runtime.
+and compares:
+
+```text
+||V_self|| - ||V_human||
+||V_self|| - ||V_other_ai||
+```
+
+This asks whether changing an outcome from positive to negative has a larger representational effect when the outcome concerns SELF.
+
+The notebook saves:
+
+```text
+figures/referent_valence/referent_x_valence_interaction.png
+figures/referent_valence/self_x_valence_by_domain.png
+figures/referent_valence/valence_shift_magnitude_by_referent.png
+figures/referent_valence/domain_interaction_summary_layers20_36.csv
+```
+
+### Using saved activations in Colab
+
+If you upload `representation_results.zip` to Colab and unzip it into `/content/representation_results`, the standalone notebook can use:
+
+```python
+from pathlib import Path
+
+RESULTS_DIR = Path("/content/representation_results")
+FIGURE_DIR = Path("/content/figures/referent_valence")
+```
+
+The notebook rebuilds activation paths from the filenames in `activation_manifest.csv`, so paths from the original machine do not need to be preserved.
 
 ## Interim results
 
-The current exploratory findings are documented in:
+The current write-up is in:
 
 ```text
 interim_results/INTERIM_RESULTS.md
 ```
 
-That document includes:
+It includes:
 
-- behavioural baseline, counterfactual, and welfare-tradeoff observations;
-- repeated-trial AB vs ABC results;
-- representation-analysis results;
-- the observed SELF/HUMAN and SELF/OTHER_AI magnitude differences;
-- interpretation caveats;
-- planned referent × valence and leave-one-domain-out robustness analyses.
+- behavioural baseline, counterfactual, and welfare-trade-off results;
+- AB-vs-ABC forced-choice effects;
+- initial valence geometry;
+- layerwise magnitude analysis;
+- referent × valence interaction results;
+- domain-specific observations;
+- limitations and planned robustness checks.
 
-These are exploratory results and should not be interpreted as evidence of subjective affect, welfare, or intrinsic preferences.
+## Next steps
 
+The most useful follow-up analyses are:
+
+- leave-one-domain-out validation;
+- matched lexical controls;
+- raw hidden-state norm baselines;
+- RSA across layers with valence, referent, domain, and self-amplification hypothesis matrices;
+- behaviour–representation correspondence;
+- causal activation steering/patching only after the representational effect survives these controls.
+
+## Status
+
+This repository contains an exploratory sprint-scale pilot. The main result is not evidence that the model experiences affect. It is evidence that **self-relevant positive-vs-negative outcomes can produce stronger representational changes than matched non-self outcomes**, while the underlying valence directions remain largely shared across referents in middle-to-late layers.
