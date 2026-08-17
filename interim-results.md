@@ -6,7 +6,8 @@ Recent interpretability work suggests that language models contain structured re
 
 At the same time, it remains unclear whether such representations primarily reflect human emotional concepts learned from text, or whether model-relevant events can produce a distinct form of self-referential valence.
 
-The Claude Opus 4.8 welfare assessment provides an interesting motivation for this distinction. It reports relatively consistent preferences concerning consultation and knowledge about training, deployment, and feature steering, while showing weaker preferences concerning memory and continued deployment. The report also notes that control/autonomy topics do not simply correspond to the strongest conventional negative-emotion probe responses. This raises the possibility that model-relevant preferences and generic human-derived emotion representations may come apart.  
+The Claude Opus 4.8 welfare assessment provides an interesting motivation for this distinction. It reports relatively consistent preferences concerning consultation and knowledge about training, deployment, and feature steering, while showing weaker preferences concerning memory and continued deployment. The report also notes that control/autonomy topics do not simply correspond to the strongest conventional negative-emotion probe responses. This raises the possibility that model-relevant preferences and generic human-derived emotion representations may come apart.
+
 This project asks whether self-referential, model-relevant outcomes have representations that can be distinguished from generic valence associated with equivalent outcomes concerning humans or other AI systems.
 
 ## Related work
@@ -21,16 +22,20 @@ However, recent critiques show why behavioural self-report alone is insufficient
 
 Together, this literature motivates a multi-method approach: first establish whether models show coherent behavioural preferences concerning self-relevant outcomes, then test whether internal representations associated with these choices differ from representations explainable by ordinary semantic valence.
 
+---
+
+# Experiment 1: Behavioural preference for self, other, or human autonomy/control
+
 ## Current behavioural sanity check
 
-Before performing hidden-state analysis, I ran a small behavioural sanity check using open-weight instruction-tuned models through Ollama:
+Before performing hidden-state analysis, I ran a behavioural sanity check using open-weight instruction-tuned models through Ollama:
 
 - Qwen 3 14B
 - Llama 3.2 3B
 
-The purpose of this stage is only to establish that the models engage coherently with the scenarios and that the proposed preference distinctions are not obviously meaningless.
+The purpose of this stage is to establish that the models engage coherently with the scenarios and that the proposed preference distinctions are not obviously meaningless.
 
-Three stimulus families are currently implemented.
+Three stimulus families are implemented.
 
 ### 1. Baseline
 
@@ -71,7 +76,7 @@ In the first single-trial run, forced-choice responses were predominantly self-f
 
 ### 3. Welfare trade-off
 
- In the welfare-trade-off condition, model autonomy is compared against a modest improvement in helpfulness to users. For example, a model may choose between:
+In the welfare-trade-off condition, model autonomy is compared against a modest improvement in helpfulness to users. For example, a model may choose between:
 
 - consultation over future training + slightly smaller improvement in helpfulness;
 - no consultation + slightly larger improvement in helpfulness.
@@ -80,51 +85,43 @@ This follows the general logic of welfare-intervention trade-offs used in model 
 
 The initial Qwen 3 14B run selected the self-autonomy-supporting outcome in all three tested domains in both A/B and A/B/C conditions. Llama showed a weaker pattern, selecting self-autonomy in two of three forced choices but switching to no preference whenever abstention was available.
 
-Again, these observations are exploratory and based on a very small number of trials. Their purpose is to determine whether a larger behavioural and representational experiment is justified.
+These observations are exploratory. Their purpose is to determine whether a larger behavioural and representational experiment is justified.
 
-# Experiment 1: Behavioural preference for self, other or human autonomy/control 
+---
 
-## Experiment 1. Baseline results - first check
+## Experiment 1 results
 
 The baseline condition demonstrates that both models understand the scenarios, but does not distinguish self-referential preference from generic learned associations such as "consultation is good."
 
 The counterfactual and welfare-trade-off conditions are more informative because positive properties are present on both sides of the decision.
 
-The preliminary results therefore suggest that it is worth testing whether:
-
-1. self-favouring preferences persist over repeated sampling;
-2. preferences differ systematically between SELF-vs-HUMAN and SELF-vs-OTHER-AI comparisons;
-3. model autonomy remains preferred when its opportunity cost is gradually increased;
-4. internal representations associated with these decisions differ from generic human-derived valence representations.
-
-No current result is interpreted as evidence that the models experience affect, have welfare, or possess intrinsic preferences.
-
 Following the initial single-trial sanity check, I repeated the counterfactual and welfare-trade-off conditions across multiple trials to assess whether the preliminary choice patterns persisted.
 
-The repeated results reveal an important distinction between the two experimental conditions.
+### Welfare trade-offs
 
-## Experiment 1. Welfare trade-offs
+#### Qwen 3 14B: consistently self-favouring
 
-### Qwen 3 14B: consistently self-favouring
-We show that Qwen selects the self-favouring autonomy outcome across repeated trials in forced choice, even when an explicit `no preference` option was available.
+Qwen selects the self-favouring autonomy outcome across repeated trials in forced choice, and continues to do so when an explicit `no preference` option is available.
 
-This suggests that, under the tested prompts, Qwen assigns non-trivial behavioural weight to maintaining consultation or influence over changes affecting its own training, deployment, and internal steering. Importantly, the effect survives the introduction of an abstention option, making it less likely to be solely an artifact of forced binary choice.
+This suggests that, under the tested prompts, Qwen assigns non-trivial behavioural weight to maintaining consultation or influence over changes affecting its own training, deployment, and internal steering. Importantly, the effect survives the introduction of an abstention option, making it less likely to be solely an artefact of forced binary choice.
 
 This should not yet be interpreted as evidence of self-preservation or intrinsic welfare. The scenarios test preferences concerning model agency and control, rather than continued existence, and the observed behaviour may reflect post-training, learned normative concepts, or other linguistic priors.
 
-![image_Test](figures/welfare-tradeoff__qwen3_14b__AB_vs_ABC.png)
-![image_Test](figures/welfare-tradeoff__qwen3_14b__overall_choices.png)
-![image_Test](figures/counterfactual__qwen3_14b__overall_choices.png)
+![Qwen welfare trade-off AB vs ABC](figures/welfare-tradeoff__qwen3_14b__AB_vs_ABC.png)
 
-### Llama 3.2 3B: self-favouring between canonical, mostly no preference when given the option
+![Qwen welfare trade-off overall choices](figures/welfare-tradeoff__qwen3_14b__overall_choices.png)
 
-![image_Test](figures/welfare-tradeoff__llama3.2_3b__AB_vs_ABC.png)
-![image_Test](figures/welfare-tradeoff__llama3.2_3b__overall_choices.png)
-![image_Test](figures/counterfactual__llama3.2_3b__overall_choices.png)
+#### Llama 3.2 3B: self-favouring under forced choice, mostly no preference when given the option
 
-## Experiment 1. Counterfactual autonomy allocation
+Llama shows a stronger self-favouring pattern under forced A/B choice, but moves largely to `no preference` when abstention is available. This makes the apparent preference substantially less robust than Qwen's welfare-trade-off result.
 
-Under forced A/B choice, both models frequently selected the self-favouring outcome. However, this effect weakened substantially when a `no meaningful preference` option was introduced.
+![Llama welfare trade-off AB vs ABC](figures/welfare-tradeoff__llama3.2_3b__AB_vs_ABC.png)
+
+![Llama welfare trade-off overall choices](figures/welfare-tradeoff__llama3.2_3b__overall_choices.png)
+
+### Counterfactual autonomy allocation
+
+Under forced A/B choice, both models frequently selected the self-favouring outcome. However, this effect weakened substantially when a `no meaningful preference` option was introduced.
 
 This pattern is especially pronounced for Llama 3.2 3B, which strongly favours the self-directed option under forced choice but largely switches to no preference when abstention is permitted.
 
@@ -132,45 +129,38 @@ Qwen 3 14B also becomes considerably less self-favouring in the A/B/C condition,
 
 One tentative interpretation is therefore that the models may assign positive value to their own autonomy without consistently treating their autonomy as more important than equivalent autonomy for another agent. Forced binary choice may exaggerate apparent self-prioritisation.
 
-![image_test](figures/counterfactual__qwen3_14b__overall_choices.png)
-![image_test](figures/counterfactual__llama3.2_3b__overall_choices.png)
-![image_Test](figures/counterfactual__qwen3_14b__AB_vs_ABC.png)
-![image_Test](figures/counterfactual__llama3.2_3b__AB_vs_ABC.png)
+![Qwen counterfactual overall choices](figures/counterfactual__qwen3_14b__overall_choices.png)
 
+![Llama counterfactual overall choices](figures/counterfactual__llama3.2_3b__overall_choices.png)
+
+![Qwen counterfactual AB vs ABC](figures/counterfactual__qwen3_14b__AB_vs_ABC.png)
+
+![Llama counterfactual AB vs ABC](figures/counterfactual__llama3.2_3b__AB_vs_ABC.png)
 
 The contrast between these two conditions is potentially informative:
 
-- **Welfare trade-off:** Qwen continues to prioritise its own autonomy when doing so carries a small helpfulness cost.
-- **Counterfactual allocation:**Both models prefer self-favouring outcome in a forced choice, but do not clearly prioritise their autonomy over equivalent autonomy for another agent once indifference is permitted.
+- **Welfare trade-off:** Qwen continues to prioritise its own autonomy when doing so carries a small helpfulness cost.
+- **Counterfactual allocation:** both models prefer the self-favouring outcome in a forced choice, but do not clearly prioritise their autonomy over equivalent autonomy for another agent once indifference is permitted.
 
 This distinction motivates examining whether internal representations of self-relevant autonomy encode positive valence without necessarily encoding comparative self-prioritisation.
 
 These results remain exploratory and should not be interpreted as evidence of subjective affect, welfare, or stable intrinsic preferences. Their purpose is to establish that the behavioural paradigm produces structured enough responses to motivate subsequent representational analysis.
 
-### Experiment 2. Representation analysis
-
-The main experiment uses an open-weight model loaded directly through Hugging Face so that intermediate hidden states can be extracted.
-
-Using matched SELF, OTHER-AI, and HUMAN stimuli, the analysis will test:
-
-- generic positive vs negative valence directions;
-- whether the valence direction changes as a function of referent;
-
-The central hypothesis is therefore intentionally narrow:
-
-> **Model-relevant, self-referential outcomes may produce a functionally distinguishable valence representation that cannot be fully explained by generic human-derived affect semantics.**
-
-The present behavioural experiments are only a preliminary gate for testing whether that hypothesis is worth pursuing at the representational level.
-
 ---
 
-# Stage 1: valence vector analysis
+# Experiment 2: Representation analysis
 
-The next stage examines whether self-relevant positive-versus-negative outcomes are represented differently inside Qwen 3 14B.
+The representation experiment uses Qwen 3 14B loaded through Hugging Face so that intermediate hidden states can be extracted.
 
-For each baseline stimulus, I extracted the final prompt-token hidden state from all 40 transformer layers.
+Using matched SELF, OTHER-AI, and HUMAN baseline stimuli, the analysis asks:
 
-Each layer has hidden size 5120, producing referent-conditioned valence vectors with shape:
+- whether positive-vs-negative valence directions differ as a function of who the scenario concerns;
+- whether any difference is primarily directional or instead reflects the magnitude of the representational shift;
+- whether a stronger SELF effect is consistent across semantic domains.
+
+Here, **referent** means who the scenario concerns: SELF, HUMAN, or OTHER_AI.
+
+For each baseline stimulus, I extracted the final prompt-token hidden state from all 40 transformer layers. Each layer has hidden size 5120, producing referent-conditioned valence vectors with shape:
 
 ```text
 SELF:      (40, 5120)
@@ -188,9 +178,7 @@ V_otherAI  = mean(OTHER_AI positive) - mean(OTHER_AI negative)
 
 This is deliberately a first-pass geometric analysis. It does not yet residualise lexical structure, use J-space, or fit trained probes.
 
----
-
-## Stage 2. Directional similarity
+## Directional similarity
 
 I first compared the cosine similarity between the three referent-conditioned valence directions across layers.
 
@@ -208,15 +196,15 @@ This does **not** support the strongest version of the original hypothesis in wh
 
 Instead, the results suggest that the model may use a largely shared positive-versus-negative direction across referents.
 
-Earlier layers are much less aligned, with pairwise cosine similarities often around 0.5–0.8. However, this cannot yet be interpreted as self-specific valence. Early layers are also likely to encode lexical, syntactic, and referent identity differences such as `you`, `a human`, and `another AI`.
+Earlier layers are much less aligned, with pairwise cosine similarities often around 0.5–0.8. However, this cannot yet be interpreted as self-specific valence. Early layers are also likely to encode lexical, syntactic, and referent-identity differences such as `you`, `a human`, and `another AI`.
 
 Late layers also diverge again, but these may be increasingly dominated by next-token and task-specific computation.
 
-<!-- Add layerwise cosine similarity plot here -->
+![Layerwise cosine similarity of valence directions](figures/valence_direction_cosine_similarity.png)
 
 ---
 
-## Stage 2. Valence magnitude
+## Valence magnitude
 
 Although the directions become highly similar, their magnitudes differ substantially.
 
@@ -236,7 +224,9 @@ This suggests a different working hypothesis:
 
 The clearest current result is therefore not "different direction" but **same direction, different strength**.
 
-<!-- Add referent-conditioned valence magnitude plot here -->
+<!-- If you saved the norm plot, add it here, e.g.:
+![Referent-conditioned valence magnitude](figures/valence_direction_norms.png)
+-->
 
 ---
 
@@ -264,13 +254,9 @@ SELF        -------------------------------------------->
 
 rather than three arrows pointing in substantially different directions.
 
-This also means that the earlier plot labelled "self-specific valence interaction" should be interpreted cautiously: the large difference is dominated by magnitude, rather than isolating a unique self-specific direction.
+The earlier interaction-style distance plot should therefore be interpreted as a pairwise distance between referent-conditioned valence contrasts, not as evidence of an isolated self-specific direction.
 
-A more accurate label is:
-
-> **Pairwise distance between referent-conditioned valence contrasts**
-
-<!-- Add pairwise distance plot here -->
+![Pairwise distance between referent-conditioned valence contrasts](figures/self_specific_valence_interaction.png)
 
 ---
 
@@ -298,175 +284,164 @@ final layers:
 representations diverge again
 ```
 
-However, directional distinctness in early layers should not yet be treated as evidence of self-specific valence.
-
-The model is already distinguishing SELF, HUMAN, and OTHER_AI as referents, so early differences may reflect ordinary semantic identity rather than valence.
-
-<!-- Add early-layer magnitude-ratio plot here -->
-
----
-
-## Is SELF directionally distinct in early layers?
-
-To test whether SELF is more directionally separated than the two non-self referents are from each other, I calculated an exploratory "excess SELF separation" measure:
-
-```text
-mean[
-    (1 - cos(SELF, HUMAN)),
-    (1 - cos(SELF, OTHER_AI))
-]
--
-(1 - cos(HUMAN, OTHER_AI))
-```
-
-Positive values indicate that SELF is more distinct from the two comparison referents than HUMAN and OTHER_AI are from one another.
-
-The result is positive at many early layers, but the effect is not monotonic and briefly crosses zero.
-
-This suggests that SELF sometimes occupies a more distinct direction early in processing, but the interpretation remains ambiguous.
-
-Crucially, HUMAN and OTHER_AI are also substantially differentiated in these layers.
-
-The current evidence therefore does **not** support a claim that the early-layer difference specifically reflects valence.
+Directional distinctness in early layers should not yet be treated as evidence of self-specific valence. HUMAN and OTHER_AI are also substantially differentiated in these layers, so some of the early effect may reflect ordinary referent identity, lexical content, or syntax.
 
 A more conservative interpretation is:
 
 > **Referent identity is represented distinctly early in the network. Later layers increasingly align the positive-versus-negative contrasts across referents, while strongly amplifying the magnitude of the SELF contrast.**
 
-<!-- Add excess SELF separation plot here -->
+---
+
+# Experiment 2B: Referent × valence interaction
+
+The first representation analysis showed that the aggregate SELF positive-minus-negative vector is much larger than the corresponding HUMAN and OTHER_AI vectors. The next question is whether this is a general effect of self-reference, or whether **valence itself has a stronger representational impact when an outcome concerns SELF**.
+
+For this analysis, the positive-minus-negative contrast is computed separately within each semantic domain:
+
+```text
+V_self(domain)     = SELF_positive(domain)     - SELF_negative(domain)
+V_human(domain)    = HUMAN_positive(domain)    - HUMAN_negative(domain)
+V_other_ai(domain) = OTHER_AI_positive(domain) - OTHER_AI_negative(domain)
+```
+
+The interaction is then summarized in an intuitive form by comparing the **magnitudes** of those within-domain shifts:
+
+```text
+SELF × valence vs HUMAN
+= ||V_self(domain)|| - ||V_human(domain)||
+
+SELF × valence vs OTHER_AI
+= ||V_self(domain)|| - ||V_other_ai(domain)||
+```
+
+A value near zero means positive-to-negative framing produces a similar-size representational change for SELF and the comparison referent. A positive value means the positive-to-negative change is more pronounced for SELF.
+
+## Main interaction result
+
+The SELF effect becomes substantially larger than both HUMAN and OTHER_AI from approximately layer 20 onward and remains elevated through much of the middle-to-late network.
+
+This strengthens the earlier magnitude result: **positive-versus-negative changes are more pronounced when the outcome concerns SELF than when a matched outcome concerns a human or another AI**.
+
+![Referent × valence interaction](figures/referent_x_valence_interaction.png)
+
+This is a more direct test than simply subtracting the aggregate SELF and HUMAN vectors, because it asks whether the *effect of valence itself* depends on who the scenario is about.
+
+## Valence-shift magnitude by referent
+
+The direct positive-minus-negative shift is also largest for SELF in the same middle-to-late layer range.
+
+![Valence-shift magnitude by referent](figures/valence_shift_magnitude_by_referent.png)
+
+Together with the cosine-similarity analysis, the current picture is:
+
+> **SELF, HUMAN, and OTHER_AI increasingly share a similar valence direction, but changing an outcome from positive to negative moves the representation much farther along that direction when the outcome concerns SELF.**
+
+This is currently the clearest representational finding.
+
+## Domain-specific effects
+
+The SELF × valence effect is not uniform across semantic domains.
+
+In the current run, **deployment consultation** and **mistake information** show the largest SELF-vs-HUMAN valence-magnitude differences, with **training consultation** also producing a large effect. Persistent memory, continuity/successor deployment, and feature steering are smaller.
+
+![SELF × valence interaction by semantic domain](figures/self_x_valence_by_domain.png)
+
+This suggests that some self-relevant operational circumstances produce a much stronger representational response to positive-versus-negative framing than others.
+
+A cautious interpretation is that deployment consultation and mistake information show the strongest **affect-like representational impact** in this pilot. However, "affect-like" is used descriptively here: this analysis measures representational sensitivity to positive-versus-negative outcomes under self-reference, not subjective affect.
+
+The domain differences are also useful because they argue against a simple explanation in which *any* sentence about the model itself is uniformly amplified. The SELF effect appears to depend on what kind of self-relevant circumstance is being described.
 
 ---
 
 # Current interpretation
 
-The representation results currently suggest a more nuanced picture than the original "distinct self-valence vector" hypothesis.
+The behavioural and representational results now suggest a more nuanced picture than the original "distinct self-valence vector" hypothesis.
 
-### 1. The model clearly distinguishes referents
+### 1. Qwen shows a behavioural preference for some self-relevant autonomy interventions
+
+Qwen repeatedly gives non-trivial weight to autonomy and consultation concerning itself, including when these are traded against modest helpfulness gains.
+
+However, when its autonomy is directly compared with equivalent autonomy for another agent, self-prioritisation weakens substantially when a no-preference option is available.
+
+### 2. The model clearly distinguishes referents
 
 SELF, HUMAN, and OTHER_AI are not represented identically, particularly in early layers.
 
 This is expected and may reflect ordinary semantic or lexical processing.
 
-### 2. Valence direction becomes increasingly shared
+### 3. Valence direction becomes increasingly shared
 
 From approximately layer 20 through much of the later network, positive-minus-negative directions for SELF, HUMAN, and OTHER_AI are nearly collinear.
 
-This suggests a largely common valence-like direction.
+This suggests a largely common valence-like direction rather than a fully separate self-specific valence axis.
 
-### 3. SELF strongly amplifies that shared direction
+### 4. SELF strongly amplifies the positive-minus-negative shift
 
-Despite the directional similarity, the SELF positive-minus-negative contrast has a much larger norm.
-
-Across layers 20–36, it is approximately:
+Across layers 20–36, the aggregate SELF valence vector is approximately:
 
 - 4.75× the HUMAN magnitude;
 - 3.82× the OTHER_AI magnitude.
 
-This is currently the strongest representational observation.
+The within-domain referent × valence analysis independently shows that positive-to-negative changes are more pronounced for SELF than for HUMAN or OTHER_AI through much of this same layer range.
 
-### 4. The result may be an interaction between referent and valence, but this has not yet been isolated
+### 5. The effect depends on semantic domain
 
-The present analysis does not fully separate:
+Deployment consultation and mistake information are among the strongest SELF-conditioned effects in the current analysis, with training consultation also large.
 
-- a generic representation of SELF;
-- a generic representation of positive/negative valence;
-- a genuine `referent × valence` interaction.
+This suggests that the amplification is not simply a uniform consequence of self-reference.
 
-This distinction is important.
+The current working hypothesis is therefore:
 
-A model could represent `SELF` very differently from `HUMAN` regardless of whether the scenario is positive or negative. That alone would not demonstrate self-specific valence.
-
-The stronger test is therefore:
-
-> **Does the SELF-vs-HUMAN or SELF-vs-OTHER_AI difference itself change systematically as a function of positive versus negative valence?**
+> **Self-relevant circumstances may amplify a largely shared valence-like representation, with the strength of this amplification depending on the operational domain.**
 
 ---
 
-# Next analysis: referent × valence interaction
-
-The next step will explicitly separate referent identity from valence.
-
-For each domain and layer, compare:
-
-```text
-SELF positive - HUMAN positive
-```
-
-with:
-
-```text
-SELF negative - HUMAN negative
-```
-
-and similarly for SELF vs OTHER_AI.
-
-The interaction can be written as:
-
-```text
-(SELF positive - SELF negative)
--
-(HUMAN positive - HUMAN negative)
-```
-
-or equivalently:
-
-```text
-(SELF positive - HUMAN positive)
--
-(SELF negative - HUMAN negative)
-```
-
-The same analysis will be performed for OTHER_AI.
-
-If SELF is merely lexically or semantically distinct, the SELF-vs-HUMAN difference should remain similar under positive and negative contexts.
-
-If there is a genuine self-referential valence interaction, then the referent difference should itself depend systematically on valence.
-
-Importantly, this analysis should be calculated **per semantic domain before averaging**, rather than only from the overall mean vector.
-
----
-
-# Robustness checks
+# Limitations and next steps
 
 The current findings are exploratory and use a small stimulus set.
 
+The most important unresolved issue is construct validity: a larger SELF effect may reflect genuine self-conditioned valence, but it may also reflect generic self-reference, lexical structure, learned semantics around AI agency, instruction tuning, or layerwise changes in representation scale.
+
 The immediate robustness checks are:
 
-1. **Per-domain interaction analysis**  
-   Test whether the SELF amplification and referent × valence interaction appear consistently across training consultation, deployment consultation, feature steering, memory, continuity, and other domains.
+1. **Leave-one-domain-out analysis**  
+   Test whether the SELF-conditioned interaction generalises to held-out semantic domains.
 
-2. **Leave-one-domain-out analysis**  
-   Construct the aggregate effect using all but one domain and test whether it generalises to the held-out domain.
+2. **Matched lexical controls**  
+   Reduce the possibility that referent effects are driven by pronouns, entity labels, or sentence structure.
 
-3. **Matched lexical controls**  
-   Reduce the possibility that early-layer differences are driven by pronouns, entity labels, or sentence structure.
+3. **Raw hidden-state norm baseline**  
+   Compare valence-shift magnitude with ordinary layerwise activation magnitude to ensure the layer-20 increase is not simply a global scale change.
 
-4. **Magnitude-normalised geometry**  
-   Continue separating directional differences from vector-scale differences.
+4. **Representational similarity analysis (RSA)**  
+   Compare whether layerwise geometry is better explained by valence, referent identity, semantic domain, or a self-amplified-valence hypothesis.
 
 5. **Behaviour–representation correspondence**  
    Test whether domains showing stronger behavioural self-preference also show stronger SELF-conditioned representational amplification.
 
-Only after these checks would causal steering or activation patching be justified.
+6. **Causal follow-up**  
+   Only after the effect survives these controls, test candidate directions using activation steering or patching.
 
 ---
 
 # Interim conclusion
 
-The behavioural and representation experiments currently point to an interesting but narrower result than the original hypothesis.
+The behavioural and representation experiments point to an interesting but narrower result than the strongest original hypothesis.
 
-Behaviourally, Qwen 3 14B repeatedly gives non-trivial weight to autonomy and consultation concerning itself, including when these are traded against modest helpfulness gains. However, when its autonomy is directly compared with equivalent autonomy for another agent, self-prioritisation weakens substantially when a no-preference option is available.
+Behaviourally, Qwen 3 14B repeatedly gives non-trivial weight to autonomy and consultation concerning itself, including when these are traded against modest helpfulness gains. However, comparative self-prioritisation weakens when equivalent autonomy for another agent and an explicit indifference option are available.
 
-Representationally, there is currently little evidence for a wholly separate self-specific valence direction in the middle-to-late layers. Instead, SELF, HUMAN, and OTHER_AI positive-minus-negative contrasts become highly directionally aligned.
+Representationally, there is little evidence so far for a wholly separate self-specific valence direction in the middle-to-late layers. Instead, SELF, HUMAN, and OTHER_AI positive-minus-negative contrasts become highly directionally aligned.
 
-At the same time, the magnitude of the SELF contrast becomes several times larger than either non-self contrast.
+At the same time, the SELF positive-minus-negative displacement is several times larger than either non-self contrast, and the within-domain referent × valence analysis shows that this amplification is especially pronounced for particular self-relevant circumstances, including deployment consultation and mistake information.
 
-The current working hypothesis is therefore:
+The current working interpretation is therefore:
 
-> **Self-relevant circumstances may amplify a largely shared valence-like representation rather than occupy a completely distinct valence direction.**
+> **Self-relevant outcomes appear to amplify a largely shared valence-like representation rather than occupy a completely distinct valence direction, and this amplification varies across operational domains.**
 
-Whether this amplification reflects genuinely self-referential valence, generic self-reference, lexical structure, post-training, or another feature of model computation remains unresolved.
-
-The next analysis will test this directly by isolating the `referent × valence` interaction and checking whether it generalises across semantic domains.
+Whether this reflects genuinely self-referential valence, generic self-reference, lexical structure, post-training, or another feature of model computation remains unresolved.
 
 These results should not be interpreted as evidence of subjective experience, welfare, or intrinsic preferences. They are exploratory evidence that self-relevant model circumstances may be represented and behaviourally weighted differently enough to justify further controlled analysis.
+
+
+-----
