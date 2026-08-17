@@ -1,0 +1,7 @@
+domain,self_valence_magnitude,human_valence_magnitude,other_ai_valence_magnitude,self_minus_human,self_minus_other_ai
+mistake_information,1105.1403,260.76776,74.736275,844.3725,1030.4093
+deployment_consultation,1237.0088,394.113,874.9916,843.1611,362.0868
+training_consultation,1037.9097,324.92282,99.00505,712.995,938.9046
+continuity_successor,521.0635,29.402657,258.99057,491.66083,262.0877
+persistent_memory,486.71207,69.757355,386.94852,416.59134,99.80911
+feature_steering,390.3981,132.70653,195.18294,257.70068,195.21516
