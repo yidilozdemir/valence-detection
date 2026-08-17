@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - "INTERIM_RESULTS.md"
+      - "interim-results.md"
       - "figures/**"
       - ".github/workflows/build-report.yml"
   workflow_dispatch:
